@@ -1,1 +1,935 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Swing Scanner">
+    <title>Swing Scanner - Mobile</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
+        :root {
+            --bg-primary: #0A0E1A;
+            --bg-secondary: #151B2E;
+            --bg-tertiary: #1E2538;
+            --accent-green: #00FF88;
+            --accent-blue: #00D4FF;
+            --accent-red: #FF4757;
+            --accent-yellow: #FFD93D;
+            --text-primary: #FFFFFF;
+            --text-secondary: #9BA3B4;
+            --border-color: #2C3447;
+        }
+
+        body {
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            padding-bottom: 2rem;
+        }
+
+        .container {
+            padding: 1rem;
+            max-width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            padding: 1.5rem 0;
+            border-bottom: 2px solid var(--accent-green);
+            margin-bottom: 1.5rem;
+        }
+
+        .title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.25rem;
+        }
+
+        .subtitle {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--accent-green);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        .input-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.875rem;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            background: var(--bg-secondary);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+            border: none;
+            border-radius: 12px;
+            color: var(--bg-primary);
+            font-size: 1.125rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+            font-size: 0.875rem;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        /* LOADING - SUPER VISIBLE */
+        .loading {
+            display: none;
+            background: var(--bg-secondary);
+            border: 3px solid var(--accent-green);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+        }
+
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 8px solid var(--bg-tertiary);
+            border-top-color: var(--accent-green);
+            border-right-color: var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-message {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.125rem;
+            color: var(--accent-green);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+            width: 0%;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        .loading-progress {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        .loading-step {
+            font-size: 0.875rem;
+            color: var(--accent-blue);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        /* SESSION */
+        .session-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-box {
+            background: var(--bg-tertiary);
+            padding: 0.75rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .compra { color: var(--accent-green); }
+        .espera { color: var(--accent-yellow); }
+        .evita { color: var(--accent-red); }
+
+        .ranking-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .ranking-item {
+            background: var(--bg-tertiary);
+            padding: 0.875rem;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .ranking-item:active {
+            transform: scale(0.98);
+            border-color: var(--accent-green);
+        }
+
+        .ranking-info {
+            flex: 1;
+        }
+
+        .ranking-ticker {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .ranking-name {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .ranking-score {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* RESULTS */
+        .results {
+            display: none;
+        }
+
+        .company-header {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .company-ticker {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .company-price {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .indicators-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .indicators-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .indicators-title {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .indicators-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .indicator-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+        }
+
+        .indicator-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+            font-weight: 700;
+        }
+
+        .indicator-icon.check {
+            background: var(--accent-green);
+            color: var(--bg-primary);
+        }
+
+        .indicator-icon.cross {
+            background: var(--accent-red);
+            color: var(--bg-primary);
+        }
+
+        .indicator-name {
+            font-size: 0.875rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .score-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 8px solid;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .score-circle.buy {
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+        }
+
+        .score-circle.wait {
+            border-color: var(--accent-yellow);
+            color: var(--accent-yellow);
+            box-shadow: 0 0 30px rgba(255, 217, 61, 0.3);
+        }
+
+        .score-circle.avoid {
+            border-color: var(--accent-red);
+            color: var(--accent-red);
+            box-shadow: 0 0 30px rgba(255, 71, 87, 0.3);
+        }
+
+        .score-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .signal-badge {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            border-radius: 10px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 1rem;
+        }
+
+        .signal-badge.buy {
+            background: var(--accent-green);
+            color: var(--bg-primary);
+        }
+
+        .signal-badge.wait {
+            background: var(--accent-yellow);
+            color: var(--bg-primary);
+        }
+
+        .signal-badge.avoid {
+            background: var(--accent-red);
+            color: var(--bg-primary);
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .detail-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .detail-status {
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        .levels-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .level-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+        }
+
+        .level-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .level-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .level-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">📊 SWING SCANNER</h1>
+            <p class="subtitle">Versión Mobile Pro</p>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">⚙️ Configuración</h2>
+            <div class="input-group">
+                <label class="input-label">API Key (Twelve Data)</label>
+                <input type="text" id="apiKey" class="input-field" placeholder="Tu API key aquí">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Ticker</label>
+                <input type="text" id="ticker" class="input-field" placeholder="Ej: CELH" style="text-transform: uppercase">
+            </div>
+            <div class="input-group">
+                <label class="input-label">Timeframe</label>
+                <select id="timeframe" class="input-field">
+                    <option value="1day">1 Día</option>
+                    <option value="1week">1 Semana</option>
+                    <option value="1month">1 Mes</option>
+                </select>
+            </div>
+            <button class="btn" onclick="analizarSwing()">🚀 ANALIZAR</button>
+        </div>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <div class="loading-message" id="loadingMessage">INICIANDO...</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="loading-progress" id="loadingProgress">0/6 pasos</div>
+            <div class="loading-step" id="loadingStep"></div>
+        </div>
+
+        <div id="sessionSummary" class="card" style="display: none;">
+            <h2 class="card-title">📊 Resumen de Sesión</h2>
+            <div class="session-stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="totalAnalyses">0</div>
+                    <div class="stat-label">Análisis</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value compra" id="buyCount">0</div>
+                    <div class="stat-label">Compra</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value espera" id="waitCount">0</div>
+                    <div class="stat-label">Espera</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value evita" id="avoidCount">0</div>
+                    <div class="stat-label">Evita</div>
+                </div>
+            </div>
+            <div id="rankingList" class="ranking-list"></div>
+            <button class="btn btn-secondary" onclick="clearSession()">🗑️ Limpiar Sesión</button>
+        </div>
+
+        <div id="resultados" class="results">
+            <div class="company-header">
+                <div class="company-ticker" id="companyTicker"></div>
+                <div class="company-price" id="companyPrice"></div>
+            </div>
+
+            <div class="indicators-card">
+                <div class="indicators-header">
+                    <span class="indicators-title">Indicadores</span>
+                    <span class="indicators-count" id="indicatorsCount">0/5</span>
+                </div>
+                <div id="indicatorsList"></div>
+            </div>
+
+            <div class="score-card">
+                <div id="scoreCircle" class="score-circle"></div>
+                <div class="score-label">Swing Score</div>
+                <div id="signalBadge" class="signal-badge"></div>
+            </div>
+
+            <div class="details-grid" id="detailsGrid"></div>
+
+            <div class="levels-card">
+                <h3 class="card-title">📍 Niveles de Trading</h3>
+                <div id="levelsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let sessionAnalyses = JSON.parse(localStorage.getItem('swingAnalyses')) || [];
+
+        function updateProgress(step, message, detail = '') {
+            const progressPercent = (step / 6) * 100;
+            document.getElementById('progressFill').style.width = progressPercent + '%';
+            document.getElementById('loadingMessage').textContent = message;
+            document.getElementById('loadingProgress').textContent = `${step}/6 pasos`;
+            document.getElementById('loadingStep').textContent = detail;
+        }
+
+        function updateSessionSummary() {
+            const summary = document.getElementById('sessionSummary');
+            if (sessionAnalyses.length === 0) {
+                summary.style.display = 'none';
+                return;
+            }
+
+            summary.style.display = 'block';
+            
+            const buyCount = sessionAnalyses.filter(a => a.signal === 'COMPRA').length;
+            const waitCount = sessionAnalyses.filter(a => a.signal === 'ESPERA').length;
+            const avoidCount = sessionAnalyses.filter(a => a.signal === 'EVITA').length;
+
+            document.getElementById('totalAnalyses').textContent = sessionAnalyses.length;
+            document.getElementById('buyCount').textContent = buyCount;
+            document.getElementById('waitCount').textContent = waitCount;
+            document.getElementById('avoidCount').textContent = avoidCount;
+
+            const rankingHtml = sessionAnalyses
+                .sort((a, b) => b.score - a.score)
+                .map((analysis, index) => `
+                    <div class="ranking-item" onclick="showAnalysis('${analysis.ticker}')">
+                        <div class="ranking-info">
+                            <div class="ranking-ticker">#${index + 1} ${analysis.ticker}</div>
+                            <div class="ranking-name">${analysis.price}</div>
+                        </div>
+                        <div class="ranking-score ${analysis.signal.toLowerCase()}">${analysis.score}</div>
+                    </div>
+                `).join('');
+
+            document.getElementById('rankingList').innerHTML = rankingHtml;
+        }
+
+        function showAnalysis(ticker) {
+            const analysis = sessionAnalyses.find(a => a.ticker === ticker);
+            if (analysis) {
+                mostrarResultados(analysis, ticker);
+                window.scrollTo({ top: document.getElementById('resultados').offsetTop - 20, behavior: 'smooth' });
+            }
+        }
+
+        function clearSession() {
+            if (confirm('¿Estás seguro de limpiar la sesión?')) {
+                sessionAnalyses = [];
+                localStorage.removeItem('swingAnalyses');
+                updateSessionSummary();
+                document.getElementById('resultados').style.display = 'none';
+            }
+        }
+
+        async function analizarSwing() {
+            const apiKey = document.getElementById('apiKey').value;
+            const ticker = document.getElementById('ticker').value.toUpperCase();
+            const timeframe = document.getElementById('timeframe').value;
+
+            if (!apiKey || !ticker) {
+                alert('Por favor completa API Key y Ticker');
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('resultados').style.display = 'none';
+            updateProgress(0, 'INICIANDO...', 'Preparando análisis...');
+
+            try {
+                // PASO 1: Precios
+                updateProgress(1, 'OBTENIENDO PRECIOS...', 'Descargando histórico...');
+                await new Promise(r => setTimeout(r, 500));
+                
+                const priceUrl = `https://api.twelvedata.com/time_series?symbol=${ticker}&interval=${timeframe}&outputsize=100&apikey=${apiKey}`;
+                const priceResponse = await fetch(priceUrl);
+                const priceData = await priceResponse.json();
+
+                if (priceData.status === 'error') throw new Error(priceData.message);
+                if (!priceData.values) throw new Error('No hay datos de precio');
+
+                const prices = priceData.values.map(v => ({
+                    date: v.datetime,
+                    close: parseFloat(v.close),
+                    volume: parseFloat(v.volume),
+                    high: parseFloat(v.high),
+                    low: parseFloat(v.low)
+                })).reverse();
+
+                const currentPrice = prices[prices.length - 1].close;
+
+                // PASO 2: MAs
+                updateProgress(2, 'CALCULANDO MAs...', 'MA5, MA20...');
+                await new Promise(r => setTimeout(r, 500));
+
+                const [ma5Res, ma20Res] = await Promise.all([
+                    fetch(`https://api.twelvedata.com/ma?symbol=${ticker}&interval=${timeframe}&time_period=5&series_type=close&apikey=${apiKey}`),
+                    fetch(`https://api.twelvedata.com/ma?symbol=${ticker}&interval=${timeframe}&time_period=20&series_type=close&apikey=${apiKey}`)
+                ]);
+
+                const ma5Data = await ma5Res.json();
+                const ma20Data = await ma20Res.json();
+
+                if (ma5Data.status === 'error') throw new Error('Error MA5');
+                if (ma20Data.status === 'error') throw new Error('Error MA20');
+
+                const ma5 = parseFloat(ma5Data.values[0].ma);
+                const ma20 = parseFloat(ma20Data.values[0].ma);
+
+                // PASO 3: RSI
+                updateProgress(3, 'CALCULANDO RSI...', 'Analizando momentum...');
+                await new Promise(r => setTimeout(r, 500));
+
+                const rsiRes = await fetch(`https://api.twelvedata.com/rsi?symbol=${ticker}&interval=${timeframe}&time_period=14&apikey=${apiKey}`);
+                const rsiData = await rsiRes.json();
+                if (rsiData.status === 'error') throw new Error('Error RSI');
+                const rsi = parseFloat(rsiData.values[0].rsi);
+
+                // PASO 4: MACD
+                updateProgress(4, 'CALCULANDO MACD...', 'Convergencia/divergencia...');
+                await new Promise(r => setTimeout(r, 500));
+
+                const macdRes = await fetch(`https://api.twelvedata.com/macd?symbol=${ticker}&interval=${timeframe}&apikey=${apiKey}`);
+                const macdData = await macdRes.json();
+                if (macdData.status === 'error') throw new Error('Error MACD');
+
+                const macd = parseFloat(macdData.values[0].macd);
+                const signal = parseFloat(macdData.values[0].macd_signal);
+
+                // PASO 5: Bollinger
+                updateProgress(5, 'CALCULANDO BOLLINGER...', 'Bandas de volatilidad...');
+                await new Promise(r => setTimeout(r, 500));
+
+                const bbRes = await fetch(`https://api.twelvedata.com/bbands?symbol=${ticker}&interval=${timeframe}&time_period=20&apikey=${apiKey}`);
+                const bbData = await bbRes.json();
+                if (bbData.status === 'error') throw new Error('Error Bollinger');
+
+                const upperBand = parseFloat(bbData.values[0].upper_band);
+                const lowerBand = parseFloat(bbData.values[0].lower_band);
+
+                // PASO 6: Análisis
+                updateProgress(6, 'FINALIZANDO...', 'Calculando score...');
+                await new Promise(r => setTimeout(r, 500));
+
+                const avgVolume = prices.slice(-20).reduce((sum, p) => sum + p.volume, 0) / 20;
+                const currentVolume = prices[prices.length - 1].volume;
+
+                const analysis = {
+                    ma: ma5 > ma20,
+                    rsi: rsi >= 40 && rsi <= 70,
+                    bollinger: currentPrice < upperBand && currentPrice > lowerBand,
+                    volume: currentVolume > avgVolume * 1.2,
+                    macd: macd > signal
+                };
+
+                const positiveCount = Object.values(analysis).filter(v => v).length;
+                const score = Math.round((positiveCount / 5) * 100);
+
+                let tradingSignal;
+                if (score >= 70) tradingSignal = 'COMPRA';
+                else if (score >= 50) tradingSignal = 'ESPERA';
+                else tradingSignal = 'EVITA';
+
+                const atr = (prices[prices.length - 1].high - prices[prices.length - 1].low);
+                const stopLoss = currentPrice - (atr * 1.5);
+                const target = currentPrice + (atr * 2.5);
+                const riskReward = ((target - currentPrice) / (currentPrice - stopLoss)).toFixed(1);
+
+                const resultado = {
+                    ticker,
+                    price: `$${currentPrice.toFixed(2)}`,
+                    score,
+                    signal: tradingSignal,
+                    indicators: analysis,
+                    details: {
+                        ma5: ma5.toFixed(2),
+                        ma20: ma20.toFixed(2),
+                        rsi: rsi.toFixed(1),
+                        macd: macd.toFixed(3),
+                        signal: signal.toFixed(3),
+                        upperBand: upperBand.toFixed(2),
+                        lowerBand: lowerBand.toFixed(2),
+                        volume: currentVolume.toLocaleString(),
+                        avgVolume: avgVolume.toLocaleString()
+                    },
+                    levels: {
+                        entry: currentPrice.toFixed(2),
+                        stop: stopLoss.toFixed(2),
+                        target: target.toFixed(2),
+                        rr: riskReward
+                    }
+                };
+
+                const existingIndex = sessionAnalyses.findIndex(a => a.ticker === ticker);
+                if (existingIndex >= 0) {
+                    sessionAnalyses[existingIndex] = resultado;
+                } else {
+                    sessionAnalyses.push(resultado);
+                }
+                localStorage.setItem('swingAnalyses', JSON.stringify(sessionAnalyses));
+
+                mostrarResultados(resultado, ticker);
+                updateSessionSummary();
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+                console.error(error);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function mostrarResultados(resultado, ticker) {
+            document.getElementById('companyTicker').textContent = ticker;
+            document.getElementById('companyPrice').textContent = resultado.price;
+
+            const indicators = [
+                { name: 'MA5 > MA20', value: resultado.indicators.ma },
+                { name: 'RSI', value: resultado.indicators.rsi },
+                { name: 'Bollinger', value: resultado.indicators.bollinger },
+                { name: 'Volumen', value: resultado.indicators.volume },
+                { name: 'MACD', value: resultado.indicators.macd }
+            ];
+
+            const positiveCount = indicators.filter(i => i.value).length;
+            document.getElementById('indicatorsCount').textContent = `${positiveCount}/5`;
+
+            const indicatorsHtml = indicators.map(ind => `
+                <div class="indicator-item">
+                    <div class="indicator-icon ${ind.value ? 'check' : 'cross'}">
+                        ${ind.value ? '✓' : '✗'}
+                    </div>
+                    <div class="indicator-name">${ind.name}</div>
+                </div>
+            `).join('');
+            document.getElementById('indicatorsList').innerHTML = indicatorsHtml;
+
+            const scoreClass = resultado.signal === 'COMPRA' ? 'buy' : resultado.signal === 'ESPERA' ? 'wait' : 'avoid';
+            const scoreCircle = document.getElementById('scoreCircle');
+            scoreCircle.textContent = resultado.score;
+            scoreCircle.className = `score-circle ${scoreClass}`;
+
+            const signalBadge = document.getElementById('signalBadge');
+            signalBadge.textContent = resultado.signal;
+            signalBadge.className = `signal-badge ${scoreClass}`;
+
+            const detailsHtml = `
+                <div class="detail-card">
+                    <div class="detail-label">MA5 > MA20</div>
+                    <div class="detail-value">${resultado.indicators.ma ? '✓ ALCISTA' : '✗ BAJISTA'}</div>
+                    <div class="detail-status">${resultado.details.ma5} vs ${resultado.details.ma20}</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-label">RSI</div>
+                    <div class="detail-value">${resultado.indicators.rsi ? '✓ OK' : '✗ EXTREMO'}</div>
+                    <div class="detail-status">${resultado.details.rsi}</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-label">Bollinger</div>
+                    <div class="detail-value">${resultado.indicators.bollinger ? '✓ NORMAL' : '✗ EXTREMO'}</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-label">Volumen</div>
+                    <div class="detail-value">${resultado.indicators.volume ? '✓ FUERTE' : '✗ DÉBIL'}</div>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-label">MACD</div>
+                    <div class="detail-value">${resultado.indicators.macd ? '✓ POSITIVO' : '✗ NEGATIVO'}</div>
+                    <div class="detail-status">${resultado.details.macd}</div>
+                </div>
+            `;
+            document.getElementById('detailsGrid').innerHTML = detailsHtml;
+
+            const levelsHtml = `
+                <div class="level-item">
+                    <span class="level-label">💵 Entrada</span>
+                    <span class="level-value">$${resultado.levels.entry}</span>
+                </div>
+                <div class="level-item">
+                    <span class="level-label">🛑 Stop Loss</span>
+                    <span class="level-value">$${resultado.levels.stop}</span>
+                </div>
+                <div class="level-item">
+                    <span class="level-label">🎯 Target</span>
+                    <span class="level-value">$${resultado.levels.target}</span>
+                </div>
+                <div class="level-item">
+                    <span class="level-label">⚖️ Risk/Reward</span>
+                    <span class="level-value">1:${resultado.levels.rr}</span>
+                </div>
+            `;
+            document.getElementById('levelsList').innerHTML = levelsHtml;
+
+            document.getElementById('resultados').style.display = 'block';
+            window.scrollTo({ top: document.getElementById('resultados').offsetTop - 20, behavior: 'smooth' });
+        }
+
+        updateSessionSummary();
+
+        const savedKey = localStorage.getItem('apiKey');
+        if (savedKey) {
+            document.getElementById('apiKey').value = savedKey;
+        }
+
+        document.getElementById('apiKey').addEventListener('change', function() {
+            localStorage.setItem('apiKey', this.value);
+        });
+    </script>
+</body>
+</html>
