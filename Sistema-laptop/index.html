@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis Técnico - Sistema Laptop (8 Indicadores)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
+        
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #12182b;
+            --bg-tertiary: #1a2332;
+            --accent-blue: #00d4ff;
+            --accent-cyan: #00fff2;
+            --accent-green: #00ff88;
+            --accent-red: #ff4757;
+            --accent-orange: #ffa502;
+            --text-primary: #e8eaed;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --border-color: #2d3748;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, #0d1220 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+        }
+        
+        .input-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            color: var(--accent-cyan);
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+        }
+        
+        button {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: var(--bg-primary);
+            padding: 14px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 212, 255, 0.3);
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        .spinner {
+            border: 4px solid var(--bg-tertiary);
+            border-top: 4px solid var(--accent-cyan);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .progress-text {
+            color: var(--accent-cyan);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+        
+        /* SESSION SUMMARY */
+        .session-summary {
+            display: none;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .session-title {
+            font-size: 1.5rem;
+            color: var(--accent-cyan);
+            font-weight: 700;
+        }
+        
+        .session-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: var(--bg-tertiary);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .stat-value.compra { color: var(--accent-green); }
+        .stat-value.espera { color: var(--accent-orange); }
+        .stat-value.evita { color: var(--accent-red); }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        
+        .ranking-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .ranking-item {
+            background: var(--bg-tertiary);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+        }
+        
+        .ranking-item:hover {
+            background: #1f2937;
+            border-left-color: var(--accent-cyan);
+        }
+        
+        .ranking-item.compra { border-left-color: var(--accent-green); }
+        .ranking-item.espera { border-left-color: var(--accent-orange); }
+        .ranking-item.evita { border-left-color: var(--accent-red); }
+        
+        .ranking-ticker {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        
+        .ranking-score {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .ranking-score.compra { color: var(--accent-green); }
+        .ranking-score.espera { color: var(--accent-orange); }
+        .ranking-score.evita { color: var(--accent-red); }
+        
+        .clear-session-btn {
+            background: var(--accent-red);
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        /* RESULTS */
+        .results {
+            display: none;
+        }
+        
+        .result-header {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .ticker-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-cyan);
+        }
+        
+        .score-display {
+            font-size: 4rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            margin: 20px 0;
+        }
+        
+        .score-display.compra { color: var(--accent-green); }
+        .score-display.espera { color: var(--accent-orange); }
+        .score-display.evita { color: var(--accent-red); }
+        
+        .signal-badge {
+            display: inline-block;
+            padding: 10px 30px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        
+        .signal-badge.compra { background: var(--accent-green); color: var(--bg-primary); }
+        .signal-badge.espera { background: var(--accent-orange); color: var(--bg-primary); }
+        .signal-badge.evita { background: var(--accent-red); color: var(--bg-primary); }
+        
+        .indicators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .indicator-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .indicator-title {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+        
+        .indicator-status {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .indicator-status.pass { color: var(--accent-green); }
+        .indicator-status.fail { color: var(--accent-red); }
+        
+        .indicator-detail {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .critical-warning {
+            background: linear-gradient(135deg, #ff4757, #ff6348);
+            border: 2px solid #ff4757;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(255, 71, 87, 0); }
+        }
+        
+        .critical-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .critical-list {
+            color: white;
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+        
+        .critical-list li {
+            margin-left: 20px;
+        }
+        
+        /* PENDIENTES DE CONFIRMACIÓN */
+        .pending-section {
+            display: none;
+            background: var(--bg-secondary);
+            border: 2px solid var(--accent-orange);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .pending-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .pending-title {
+            font-size: 1.3rem;
+            color: var(--accent-orange);
+            font-weight: 700;
+        }
+        
+        .pending-count {
+            background: var(--accent-orange);
+            color: var(--bg-primary);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        
+        .pending-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        
+        .pending-item {
+            background: var(--bg-tertiary);
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-orange);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .pending-item:hover {
+            background: #1f2937;
+            border-left-color: var(--accent-cyan);
+        }
+        
+        .pending-info {
+            flex: 1;
+        }
+        
+        .pending-ticker-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-orange);
+            margin-bottom: 5px;
+        }
+        
+        .pending-reason {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 3px;
+        }
+        
+        .pending-age {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .pending-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .reanalyze-btn {
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .remove-btn {
+            background: var(--accent-red);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .pending-controls {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .reanalyze-all-btn {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: var(--bg-primary);
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .clear-pending-btn {
+            background: var(--accent-red);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Sistema de Análisis Técnico</h1>
+        <p class="subtitle">Análisis de mediano/largo plazo con 9 indicadores (8 + 52-Week High) | Powered by Twelve Data</p>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <label>API Key (Twelve Data)</label>
+                <input type="text" id="apiKey" placeholder="Tu API key aquí">
+            </div>
+            
+            <div class="input-group">
+                <label>Ticker</label>
+                <input type="text" id="ticker" placeholder="Ej: AAPL" style="text-transform: uppercase">
+            </div>
+            
+            <button onclick="analizarTicker()">🚀 ANALIZAR</button>
+        </div>
+        
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p class="progress-text" id="progressText">Iniciando análisis...</p>
+        </div>
+        
+        <div id="sessionSummary" class="session-summary">
+            <div class="session-header">
+                <h2 class="session-title">📊 Resumen de Sesión</h2>
+            </div>
+            
+            <div class="session-stats">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalCount">0</div>
+                    <div class="stat-label">Total Analizados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value compra" id="compraCount">0</div>
+                    <div class="stat-label">Compra</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value espera" id="esperaCount">0</div>
+                    <div class="stat-label">Espera</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value evita" id="evitaCount">0</div>
+                    <div class="stat-label">Evita</div>
+                </div>
+            </div>
+            
+            <div id="rankingList" class="ranking-list"></div>
+            
+            <button class="clear-session-btn" onclick="limpiarSesion()">🗑️ Limpiar Sesión</button>
+        </div>
+        
+        <div id="pendingSection" class="pending-section">
+            <div class="pending-header">
+                <h2 class="pending-title">⏳ PENDIENTES DE CONFIRMACIÓN</h2>
+                <span class="pending-count" id="pendingCount">0</span>
+            </div>
+            
+            <div id="pendingList" class="pending-list"></div>
+            
+            <div class="pending-controls">
+                <button class="reanalyze-all-btn" onclick="reanalizarPendientes()">🔄 Re-analizar Todos</button>
+                <button class="clear-pending-btn" onclick="limpiarPendientes()">🗑️ Limpiar Lista</button>
+            </div>
+        </div>
+        
+        <div id="results" class="results">
+            <div class="result-header">
+                <div class="ticker-name" id="tickerDisplay"></div>
+                <div class="score-display" id="scoreDisplay"></div>
+                <div class="signal-badge" id="signalBadge"></div>
+            </div>
+            
+            <div class="indicators-grid" id="indicatorsGrid"></div>
+        </div>
+    </div>
+    
+    <script>
+        let sessionData = JSON.parse(localStorage.getItem('laptopSession')) || [];
+        let pendingData = JSON.parse(localStorage.getItem('laptopPending')) || [];
+        
+        // Limpiar pendientes antiguos (>7 días)
+        function cleanOldPending() {
+            const now = new Date().getTime();
+            const maxAge = 7 * 24 * 60 * 60 * 1000; // 7 días en ms
+            pendingData = pendingData.filter(p => {
+                const age = now - p.timestamp;
+                return age < maxAge;
+            });
+            localStorage.setItem('laptopPending', JSON.stringify(pendingData));
+        }
+        
+        cleanOldPending();
+        
+        function updateProgress(message) {
+            document.getElementById('progressText').textContent = message;
+        }
+        
+        function updateSessionSummary() {
+            if (sessionData.length === 0) {
+                document.getElementById('sessionSummary').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('sessionSummary').style.display = 'block';
+            
+            const compraCount = sessionData.filter(d => d.signal === 'COMPRA').length;
+            const esperaCount = sessionData.filter(d => d.signal === 'ESPERA').length;
+            const evitaCount = sessionData.filter(d => d.signal === 'EVITA').length;
+            
+            document.getElementById('totalCount').textContent = sessionData.length;
+            document.getElementById('compraCount').textContent = compraCount;
+            document.getElementById('esperaCount').textContent = esperaCount;
+            document.getElementById('evitaCount').textContent = evitaCount;
+            
+            const sortedData = [...sessionData].sort((a, b) => b.score - a.score);
+            
+            const rankingHtml = sortedData.map((item, index) => `
+                <div class="ranking-item ${item.signal.toLowerCase()}" onclick="mostrarAnalisis('${item.ticker}')">
+                    <div>
+                        <div class="ranking-ticker">
+                            #${index + 1} ${item.ticker}
+                            ${item.has52WH ? '<span style="color: #FFD700; margin-left: 8px;">⭐</span>' : ''}
+                            ${item.criticalFailures && item.criticalFailures.length > 0 ? '<span style="color: #ff4757; margin-left: 8px;">⚠️</span>' : ''}
+                        </div>
+                        <div class="stat-label">
+                            ${item.signal}
+                            ${item.has52WH ? ` | 52WH hace ${item.diasDesdeBreakout} día${item.diasDesdeBreakout !== 1 ? 's' : ''}` : ''}
+                            ${item.criticalFailures && item.criticalFailures.length > 0 ? ' | ALERTA CRÍTICA' : ''}
+                        </div>
+                    </div>
+                    <div class="ranking-score ${item.signal.toLowerCase()}">${item.score}%</div>
+                </div>
+            `).join('');
+            
+            document.getElementById('rankingList').innerHTML = rankingHtml;
+        }
+        
+        function updatePendingList() {
+            if (pendingData.length === 0) {
+                document.getElementById('pendingSection').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('pendingSection').style.display = 'block';
+            document.getElementById('pendingCount').textContent = pendingData.length;
+            
+            const now = new Date().getTime();
+            
+            const pendingHtml = pendingData.map(item => {
+                const ageMs = now - item.timestamp;
+                const ageDays = Math.floor(ageMs / (1000 * 60 * 60 * 24));
+                const ageHours = Math.floor((ageMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                
+                let ageText = '';
+                if (ageDays > 0) {
+                    ageText = `${ageDays} día${ageDays !== 1 ? 's' : ''}`;
+                } else {
+                    ageText = `${ageHours} hora${ageHours !== 1 ? 's' : ''}`;
+                }
+                
+                const remainingDays = 7 - ageDays;
+                const urgency = remainingDays <= 2 ? ' 🔥' : '';
+                
+                return `
+                    <div class="pending-item">
+                        <div class="pending-info">
+                            <div class="pending-ticker-name">${item.ticker}${urgency}</div>
+                            <div class="pending-reason">❌ ${item.reason}</div>
+                            <div class="pending-age">Añadido hace ${ageText} | Quedan ${remainingDays} días</div>
+                        </div>
+                        <div class="pending-actions">
+                            <button class="reanalyze-btn" onclick="reanalizarPendiente('${item.ticker}')">🔄 Re-analizar</button>
+                            <button class="remove-btn" onclick="eliminarPendiente('${item.ticker}')">✕</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('pendingList').innerHTML = pendingHtml;
+        }
+        
+        function mostrarAnalisis(ticker) {
+            const data = sessionData.find(d => d.ticker === ticker);
+            if (data) {
+                mostrarResultados(data);
+                window.scrollTo({ top: document.getElementById('results').offsetTop - 20, behavior: 'smooth' });
+            }
+        }
+        
+        function limpiarSesion() {
+            if (confirm('¿Estás seguro de limpiar la sesión?')) {
+                sessionData = [];
+                localStorage.removeItem('laptopSession');
+                updateSessionSummary();
+                document.getElementById('results').style.display = 'none';
+            }
+        }
+        
+        function limpiarPendientes() {
+            if (confirm('¿Estás seguro de limpiar todos los pendientes?')) {
+                pendingData = [];
+                localStorage.removeItem('laptopPending');
+                updatePendingList();
+            }
+        }
+        
+        function eliminarPendiente(ticker) {
+            pendingData = pendingData.filter(p => p.ticker !== ticker);
+            localStorage.setItem('laptopPending', JSON.stringify(pendingData));
+            updatePendingList();
+        }
+        
+        async function reanalizarPendiente(ticker) {
+            document.getElementById('ticker').value = ticker;
+            await analizarTicker();
+        }
+        
+        async function reanalizarPendientes() {
+            if (pendingData.length === 0) {
+                alert('No hay pendientes para re-analizar');
+                return;
+            }
+            
+            if (!confirm(`¿Re-analizar ${pendingData.length} ticker${pendingData.length !== 1 ? 's' : ''}? Esto tomará ~${pendingData.length * 15} segundos.`)) {
+                return;
+            }
+            
+            const apiKey = document.getElementById('apiKey').value;
+            if (!apiKey) {
+                alert('Por favor ingresa tu API Key primero');
+                return;
+            }
+            
+            for (const pending of [...pendingData]) {
+                document.getElementById('ticker').value = pending.ticker;
+                await analizarTicker();
+                await new Promise(r => setTimeout(r, 2000)); // Pausa entre análisis
+            }
+            
+            alert('Re-análisis completado. Revisa los resultados.');
+        }
+        
+        function añadirPendiente(ticker, reason) {
+            // Verificar si ya existe
+            const exists = pendingData.find(p => p.ticker === ticker);
+            if (exists) {
+                // Actualizar timestamp
+                exists.timestamp = new Date().getTime();
+                exists.reason = reason;
+            } else {
+                // Límite de 10 pendientes
+                if (pendingData.length >= 10) {
+                    alert('⚠️ Máximo 10 pendientes. Elimina algunos antes de añadir más.');
+                    return;
+                }
+                
+                pendingData.push({
+                    ticker,
+                    reason,
+                    timestamp: new Date().getTime()
+                });
+            }
+            
+            localStorage.setItem('laptopPending', JSON.stringify(pendingData));
+            updatePendingList();
+        }
+        
+        async function analizarTicker() {
+            const apiKey = document.getElementById('apiKey').value;
+            const ticker = document.getElementById('ticker').value.toUpperCase();
+            
+            if (!apiKey || !ticker) {
+                alert('Por favor completa API Key y Ticker');
+                return;
+            }
+            
+            localStorage.setItem('laptopApiKey', apiKey);
+            
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            
+            try {
+                // 1. Obtener precio actual y histórico
+                updateProgress('Paso 1/8: Obteniendo precios...');
+                const priceUrl = `https://api.twelvedata.com/time_series?symbol=${ticker}&interval=1day&outputsize=260&apikey=${apiKey}`;
+                const priceRes = await fetch(priceUrl);
+                const priceData = await priceRes.json();
+                
+                if (priceData.status === 'error') throw new Error(priceData.message);
+                if (!priceData.values) throw new Error('No hay datos de precio');
+                
+                const prices = priceData.values.map(v => parseFloat(v.close)).reverse();
+                const currentPrice = prices[prices.length - 1];
+                const maxPrice = Math.max(...prices);
+                
+                // 52-Week High (260 días hábiles = ~1 año)
+                const prices52w = prices.slice(-260);
+                const max52w = Math.max(...prices52w);
+                const is52WeekHigh = currentPrice >= max52w * 0.99; // 99% considera "en máximo"
+                
+                // Calcular días desde el breakout
+                let diasDesdeBreakout = 0;
+                if (is52WeekHigh) {
+                    // Buscar el índice del máximo de 52 semanas
+                    const indexMax52w = prices52w.findIndex(p => p === max52w);
+                    // Calcular días transcurridos desde ese máximo
+                    diasDesdeBreakout = prices52w.length - 1 - indexMax52w;
+                }
+                
+                await new Promise(r => setTimeout(r, 500));
+                
+                // 2. MA50 y MA200
+                updateProgress('Paso 2/8: Calculando MA50 y MA200...');
+                const [ma50Res, ma200Res] = await Promise.all([
+                    fetch(`https://api.twelvedata.com/ma?symbol=${ticker}&interval=1day&time_period=50&apikey=${apiKey}`),
+                    fetch(`https://api.twelvedata.com/ma?symbol=${ticker}&interval=1day&time_period=200&apikey=${apiKey}`)
+                ]);
+                
+                const ma50Data = await ma50Res.json();
+                const ma200Data = await ma200Res.json();
+                
+                if (ma50Data.status === 'error' || ma200Data.status === 'error') {
+                    throw new Error('Error obteniendo MAs');
+                }
+                
+                const ma50 = parseFloat(ma50Data.values[0].ma);
+                const ma200 = parseFloat(ma200Data.values[0].ma);
+                const ma200Prev = parseFloat(ma200Data.values[5].ma);
+                
+                await new Promise(r => setTimeout(r, 500));
+                
+                // 3. RSI
+                updateProgress('Paso 3/8: Calculando RSI...');
+                const rsiRes = await fetch(`https://api.twelvedata.com/rsi?symbol=${ticker}&interval=1day&time_period=14&apikey=${apiKey}`);
+                const rsiData = await rsiRes.json();
+                if (rsiData.status === 'error') throw new Error('Error RSI');
+                const rsi = parseFloat(rsiData.values[0].rsi);
+                
+                await new Promise(r => setTimeout(r, 500));
+                
+                // 4. MACD
+                updateProgress('Paso 4/8: Calculando MACD...');
+                const macdRes = await fetch(`https://api.twelvedata.com/macd?symbol=${ticker}&interval=1day&apikey=${apiKey}`);
+                const macdData = await macdRes.json();
+                if (macdData.status === 'error') throw new Error('Error MACD');
+                const macd = parseFloat(macdData.values[0].macd);
+                const macdSignal = parseFloat(macdData.values[0].macd_signal);
+                
+                await new Promise(r => setTimeout(r, 500));
+                
+                // 5. Volumen
+                updateProgress('Paso 5/8: Analizando volumen...');
+                const volumes = priceData.values.map(v => parseFloat(v.volume)).reverse();
+                const avgVolume = volumes.slice(-20).reduce((a, b) => a + b) / 20;
+                const currentVolume = volumes[volumes.length - 1];
+                
+                await new Promise(r => setTimeout(r, 500));
+                
+                // 6. Bollinger (para zona favorable)
+                updateProgress('Paso 6/8: Calculando Bollinger Bands...');
+                const bbRes = await fetch(`https://api.twelvedata.com/bbands?symbol=${ticker}&interval=1day&time_period=20&apikey=${apiKey}`);
+                const bbData = await bbRes.json();
+                if (bbData.status === 'error') throw new Error('Error Bollinger');
+                const upperBand = parseFloat(bbData.values[0].upper_band);
+                const lowerBand = parseFloat(bbData.values[0].lower_band);
+                
+                await new Promise(r => setTimeout(r, 500));
+                
+                // 7. S&P 500 para fuerza relativa
+                updateProgress('Paso 7/8: Calculando fuerza relativa vs S&P 500...');
+                const spyUrl = `https://api.twelvedata.com/time_series?symbol=SPY&interval=1day&outputsize=50&apikey=${apiKey}`;
+                const spyRes = await fetch(spyUrl);
+                const spyData = await spyRes.json();
+                
+                let fuerzaRelativa = false;
+                if (spyData.values) {
+                    const spyPrices = spyData.values.map(v => parseFloat(v.close)).reverse();
+                    const spyReturn = ((spyPrices[spyPrices.length - 1] - spyPrices[0]) / spyPrices[0]) * 100;
+                    const tickerReturn = ((prices[prices.length - 1] - prices[prices.length - 50]) / prices[prices.length - 50]) * 100;
+                    fuerzaRelativa = tickerReturn > spyReturn;
+                }
+                
+                await new Promise(r => setTimeout(r, 500));
+                
+                // 8. Análisis de indicadores
+                updateProgress('Paso 8/8: Calculando score final...');
+                
+                const indicators = {
+                    tendenciaAlcista: ma50 > ma200,
+                    ma200Ascendente: ma200 > ma200Prev,
+                    precioVsMaximos: ((maxPrice - currentPrice) / maxPrice) * 100 < 15,
+                    rsiZonaFavorable: rsi >= 30 && rsi <= 70,
+                    macdCruceAlcista: macd > macdSignal,
+                    volumenConfirma: currentVolume > avgVolume,
+                    precioZonaFavorable: currentPrice > lowerBand && currentPrice < upperBand,
+                    fuerzaRelativa: fuerzaRelativa,
+                    weekHigh52: is52WeekHigh
+                };
+                
+                // Score base (primeros 8 indicadores)
+                const baseIndicators = Object.keys(indicators).slice(0, 8);
+                const positiveCount = baseIndicators.filter(key => indicators[key]).length;
+                const baseScore = Math.round((positiveCount / 8) * 100);
+                
+                // REGLA DE VETO: Indicadores críticos
+                const criticalFailures = [];
+                if (!indicators.tendenciaAlcista) {
+                    criticalFailures.push('Tendencia BAJISTA (MA50 < MA200)');
+                }
+                if (!indicators.volumenConfirma) {
+                    criticalFailures.push('Volumen DÉBIL (sin convicción institucional)');
+                }
+                
+                // Bonus por 52-Week High
+                const bonus52WH = is52WeekHigh ? 10 : 0;
+                
+                // Calcular score total PRIMERO
+                let score = Math.min(baseScore + bonus52WH, 110); // Máximo 110%
+                
+                // APLICAR VETO DESPUÉS (esto corrige el bug)
+                if (criticalFailures.length > 0) {
+                    score = Math.min(score, 49); // Fuerza a EVITA
+                }
+                
+                let signal;
+                if (score >= 90) signal = 'COMPRA';
+                else if (score >= 70) signal = 'COMPRA';
+                else if (score >= 50) signal = 'ESPERA';
+                else signal = 'EVITA';
+                
+                const result = {
+                    ticker,
+                    score,
+                    baseScore,
+                    bonus52WH,
+                    has52WH: is52WeekHigh,
+                    diasDesdeBreakout,
+                    criticalFailures,
+                    signal,
+                    currentPrice: currentPrice.toFixed(2),
+                    indicators: {
+                        'Tendencia alcista (MA50 > MA200)': {
+                            pass: indicators.tendenciaAlcista,
+                            detail: `MA50: $${ma50.toFixed(2)} | MA200: $${ma200.toFixed(2)}`
+                        },
+                        'MA200 en pendiente ascendente': {
+                            pass: indicators.ma200Ascendente,
+                            detail: `MA200: $${ma200.toFixed(2)} (vs $${ma200Prev.toFixed(2)} hace 5 días)`
+                        },
+                        'Precio a <15% desde máximos': {
+                            pass: indicators.precioVsMaximos,
+                            detail: `Actual: $${currentPrice.toFixed(2)} | Máximo: $${maxPrice.toFixed(2)} (${(((maxPrice - currentPrice) / maxPrice) * 100).toFixed(1)}%)`
+                        },
+                        'RSI en zona favorable (30-70)': {
+                            pass: indicators.rsiZonaFavorable,
+                            detail: `RSI: ${rsi.toFixed(1)}`
+                        },
+                        'MACD en cruce alcista': {
+                            pass: indicators.macdCruceAlcista,
+                            detail: `MACD: ${macd.toFixed(2)} | Señal: ${macdSignal.toFixed(2)}`
+                        },
+                        'Volumen confirma (> promedio)': {
+                            pass: indicators.volumenConfirma,
+                            detail: `Actual: ${currentVolume.toLocaleString()} | Promedio: ${avgVolume.toLocaleString()}`
+                        },
+                        'Precio en zona favorable': {
+                            pass: indicators.precioZonaFavorable,
+                            detail: `Banda inferior: $${lowerBand.toFixed(2)} | Banda superior: $${upperBand.toFixed(2)}`
+                        },
+                        'Fuerza relativa positiva vs S&P 500': {
+                            pass: indicators.fuerzaRelativa,
+                            detail: fuerzaRelativa ? 'Supera al S&P 500' : 'Por debajo del S&P 500'
+                        },
+                        '52-Week High Breakout ⭐': {
+                            pass: indicators.weekHigh52,
+                            detail: is52WeekHigh ? 
+                                `✅ BREAKOUT hace ${diasDesdeBreakout} día${diasDesdeBreakout !== 1 ? 's' : ''} | Precio actual: $${currentPrice.toFixed(2)} | Máximo 52w: $${max52w.toFixed(2)} (+${bonus52WH} puntos bonus)` : 
+                                `Máximo 52 semanas: $${max52w.toFixed(2)} | Falta: ${(((max52w - currentPrice) / currentPrice) * 100).toFixed(1)}%`
+                        }
+                    }
+                };
+                
+                // Guardar en sesión
+                const existingIndex = sessionData.findIndex(d => d.ticker === ticker);
+                if (existingIndex >= 0) {
+                    sessionData[existingIndex] = result;
+                } else {
+                    sessionData.push(result);
+                }
+                localStorage.setItem('laptopSession', JSON.stringify(sessionData));
+                
+                // Si fue vetado, añadir a pendientes automáticamente
+                if (criticalFailures.length > 0) {
+                    const reason = criticalFailures.join(', ');
+                    añadirPendiente(ticker, reason);
+                } else {
+                    // Si ya no tiene fallas, eliminarlo de pendientes
+                    eliminarPendiente(ticker);
+                }
+                
+                mostrarResultados(result);
+                updateSessionSummary();
+                updatePendingList();
+                
+            } catch (error) {
+                alert('Error: ' + error.message);
+                console.error(error);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+        
+        function mostrarResultados(data) {
+            // Limpiar displays previos
+            const resultHeader = document.querySelector('.result-header');
+            const existingPrice = resultHeader.querySelector('div[style*="1.5rem"]');
+            const existingBadges = resultHeader.querySelectorAll('div[style*="linear-gradient"]');
+            const existingBreakdown = resultHeader.querySelector('div[style*="0.9rem"]');
+            
+            if (existingPrice) existingPrice.remove();
+            existingBadges.forEach(b => b.remove());
+            if (existingBreakdown) existingBreakdown.remove();
+            
+            document.getElementById('tickerDisplay').textContent = data.ticker;
+            document.getElementById('scoreDisplay').textContent = data.score + '%';
+            document.getElementById('scoreDisplay').className = `score-display ${data.signal.toLowerCase()}`;
+            
+            // Mostrar precio actual
+            const priceDisplay = document.createElement('div');
+            priceDisplay.style.cssText = 'font-size: 1.5rem; color: var(--accent-cyan); margin: 10px 0; font-family: "JetBrains Mono", monospace;';
+            priceDisplay.textContent = `$${data.currentPrice}`;
+            
+            const tickerElement = document.getElementById('tickerDisplay');
+            tickerElement.parentNode.insertBefore(priceDisplay, tickerElement.nextSibling);
+            
+            const badge = document.getElementById('signalBadge');
+            badge.textContent = data.signal;
+            badge.className = `signal-badge ${data.signal.toLowerCase()}`;
+            
+            // Badge adicional para 52-Week High
+            if (data.has52WH) {
+                const badge52WH = document.createElement('div');
+                badge52WH.style.cssText = 'display: inline-block; padding: 10px 30px; border-radius: 8px; font-size: 1rem; font-weight: 700; background: linear-gradient(135deg, #FFD700, #FFA500); color: var(--bg-primary); margin-left: 10px;';
+                badge52WH.textContent = `⭐ 52-WEEK HIGH (hace ${data.diasDesdeBreakout} día${data.diasDesdeBreakout !== 1 ? 's' : ''})`;
+                badge.parentNode.appendChild(badge52WH);
+            }
+            
+            // Mostrar desglose de score
+            if (data.bonus52WH > 0) {
+                const scoreBreakdown = document.createElement('div');
+                scoreBreakdown.style.cssText = 'font-size: 0.9rem; color: var(--text-secondary); margin-top: 10px;';
+                scoreBreakdown.innerHTML = `Score base: ${data.baseScore}% + Bonus 52WH: +${data.bonus52WH}% = <strong style="color: var(--accent-green);">${data.score}%</strong>`;
+                badge.parentNode.appendChild(scoreBreakdown);
+            }
+            
+            // ALERTA CRÍTICA si hay fallas
+            let criticalWarningHtml = '';
+            if (data.criticalFailures && data.criticalFailures.length > 0) {
+                criticalWarningHtml = `
+                    <div class="critical-warning">
+                        <div class="critical-title">
+                            ⚠️ ALERTA: INDICADORES CRÍTICOS FALLAN
+                        </div>
+                        <ul class="critical-list">
+                            ${data.criticalFailures.map(f => `<li>❌ ${f}</li>`).join('')}
+                        </ul>
+                        <div style="margin-top: 15px; font-size: 0.9rem; color: white; font-weight: 600;">
+                            📋 Score limitado a 49% por Regla de Veto
+                        </div>
+                        <div style="margin-top: 8px; font-size: 0.85rem; color: rgba(255,255,255,0.9);">
+                            💡 Recomendación: NO OPERAR o analizar MUY cuidadosamente
+                        </div>
+                    </div>
+                `;
+            }
+            
+            const indicatorsHtml = Object.entries(data.indicators).map(([name, value]) => `
+                <div class="indicator-card">
+                    <div class="indicator-title">${name}</div>
+                    <div class="indicator-status ${value.pass ? 'pass' : 'fail'}">
+                        ${value.pass ? '✓ CUMPLE' : '✗ NO CUMPLE'}
+                    </div>
+                    <div class="indicator-detail">${value.detail}</div>
+                </div>
+            `).join('');
+            
+            document.getElementById('indicatorsGrid').innerHTML = criticalWarningHtml + indicatorsHtml;
+            document.getElementById('results').style.display = 'block';
+            
+            window.scrollTo({ top: document.getElementById('results').offsetTop - 20, behavior: 'smooth' });
+        }
+        
+        // Cargar API key guardada
+        const savedApiKey = localStorage.getItem('laptopApiKey');
+        if (savedApiKey) {
+            document.getElementById('apiKey').value = savedApiKey;
+        }
+        
+        // Actualizar resumen y pendientes al cargar
+        updateSessionSummary();
+        updatePendingList();
+    </script>
+</body>
+</html>
